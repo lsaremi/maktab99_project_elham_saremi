@@ -1,10 +1,11 @@
-import IncrementCounter from "./components/IncrementCounter";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
 
 function App() {
   return (
-    <>
-      <IncrementCounter />
-    </>
+    <div>
+      <RouterProvider router={router} />
+    </div>
   );
 }
 
