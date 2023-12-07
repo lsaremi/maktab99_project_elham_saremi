@@ -7,5 +7,5 @@ export const PAYMENT_ROUTE = "payment";
 export const NOPAGE_ROUTE = "*";
 export const LOGIN_ROUTE = "login";
 export const PANELPRODUCTS_ROUTE = "/admin";
-export const PANELQUANTITY_ROUTE = "panelQuantity";
-export const PANELORDERS_ROUTE = "panelOrders";
+export const PANELQUANTITY_ROUTE = "panelquantity";
+export const PANELORDERS_ROUTE = "panelorders";
