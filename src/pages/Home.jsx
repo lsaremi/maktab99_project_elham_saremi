@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
+import { PRODUCTS_ROUTE } from "../config";
 
 const Home = () => {
   return (
     <>
       <div>Home</div>
-      <Link to="products">categories</Link>
+      <Link to={PRODUCTS_ROUTE}>categories</Link>
     </>
   );
 };
