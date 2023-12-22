@@ -1,4 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
+import { lazy } from "react";
+import { Loadable } from "../components";
 
 import {
   HOME_ROUTE,
@@ -14,20 +16,20 @@ import {
   PAYMENT_ROUTE,
 } from "../config";
 
-import { MainApp, MainAdmin } from "../layouts";
-import { PrivateRoute } from "./PrivateRoute";
+import { MainApp, MainAdminWithGuard } from "../layouts";
 
 import Home from "../pages/Home";
 import Products from "../pages/Products";
-import Product from "../pages/Product";
 import Basket from "../pages/Basket";
 import CheckOut from "../pages/CheckOut";
 import Payment from "../pages/Payment";
 import Login from "../pages/Login";
-import PanelProducts from "../pages/PanelProducts";
-import PanelQuantity from "../pages/PanelQuantity";
-import PanelOrders from "../pages/PanelOrders";
 import NoPage from "../pages/NoPage";
+// import Product from "../pages/Product";
+const Product = Loadable(lazy(() => import("../pages/Product")));
+const PanelProducts = Loadable(lazy(() => import("../pages/PanelProducts")));
+const PanelQuantity = Loadable(lazy(() => import("../pages/PanelQuantity")));
+const PanelOrders = Loadable(lazy(() => import("../pages/PanelOrders")));
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +48,7 @@ export const router = createBrowserRouter([
         path: PRODUCT_ROUTE,
         element: <Product />,
       },
+
       {
         path: BASKET_ROUTE,
         element: <Basket />,
@@ -62,11 +65,7 @@ export const router = createBrowserRouter([
   },
   {
     path: PANELPRODUCTS_ROUTE,
-    element: (
-      <PrivateRoute>
-        <MainAdmin />
-      </PrivateRoute>
-    ),
+    element: <MainAdminWithGuard />,
     children: [
       {
         index: true,
