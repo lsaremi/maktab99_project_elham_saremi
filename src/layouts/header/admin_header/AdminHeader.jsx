@@ -6,7 +6,7 @@ import { HOME_ROUTE } from "../../../config";
 
 export const AdminHeader = () => {
   return (
-    <header className="bg-[#4D4D4D]">
+    <header className="bg-[#4D4D4D] mb-5">
       <div className="container mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-4 relative">
           <Link to={HOME_ROUTE}>
