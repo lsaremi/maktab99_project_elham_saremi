@@ -1,14 +1,38 @@
 import { useState } from "react";
-import { GetCategoryById, useGetAllProducts, GetSubcategoryById } from "../api";
+import {
+  GetCategoryById,
+  GetSubcategoryById,
+  instance,
+  useGetAllProducts,
+} from "../api";
 import { OutlineButton, Pagination, SelectBox, Table } from "../components";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { PRODUCTS_URL } from "../config";
+import { AddEditModal, DeleteModal } from "../common";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Spinner } from "../common";
 
 const PanelProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  const [showModal, setShowModal] = useState({
+    add: false,
+    delete: false,
+    edit: false,
+    spinner: false,
+  });
+  const [selectedProductForDelete, setSelectedProductForDelete] = useState([]);
+  const [selectedProductForEdit, setSelectedProductForEdit] = useState(null);
+
+  const [showToast, setShowToast] = useState(false);
+
+  const queryClient = useQueryClient();
   const TRowsPerPage = 4;
 
-  const [products, total, total_pages] = useGetAllProducts(
+  const [products, total, total_pages, isPending] = useGetAllProducts(
     currentPage,
     TRowsPerPage,
     selectedCategory
@@ -20,6 +44,130 @@ const PanelProducts = () => {
     setSelectedCategory(categoryId);
     setCurrentPage(1);
   };
+
+  // delete mutation ....
+  const mutation = useMutation({
+    mutationFn: (id) => instance.delete(`${PRODUCTS_URL}/${id}`),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["panelProductsData"] });
+      toast.success("محصول با موفقیت حذف شد", {
+        autoClose: 2000,
+        theme: "dark",
+      });
+    },
+    onError: async () => {
+      toast.error("محصول حذف نشد", {
+        autoClose: 2000,
+        theme: "dark",
+      });
+    },
+  });
+
+  //add mutation ...
+  const addProduct = useMutation({
+    mutationFn: (product) =>
+      instance.post(`${PRODUCTS_URL}`, product, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+
+    onMutate: () => {
+      setShowModal((prevModal) => ({ ...prevModal, spinner: true }));
+    },
+    onError: async (error) => {
+      console.log("error", error);
+      await queryClient.invalidateQueries({ queryKey: ["panelProductsData"] });
+
+      toast.error("🥲 محصول اضافه نشد", {
+        autoClose: 2000,
+        theme: "dark",
+      });
+    },
+    onSuccess: async () => {
+      console.log("با موفقیت اضافه شد");
+      await queryClient.invalidateQueries({ queryKey: ["panelProductsData"] });
+      toast.success("محصول به درستی اضافه شد😍", {
+        autoClose: 2000,
+        theme: "dark",
+      });
+    },
+    onSettled: () => {
+      setShowModal((prevModal) => ({ ...prevModal, spinner: false }));
+    },
+  });
+
+  //edit mutation ...
+  const editProduct = useMutation({
+    mutationFn: (product) => {
+      return instance.patch(
+        `${PRODUCTS_URL}/${selectedProductForEdit.id}`,
+        product
+      );
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["panelProductsData"] });
+      setSelectedProductForEdit(null);
+      toast.success("محصول به درستی ویرایش شد 🤩", {
+        autoClose: 2000,
+        theme: "dark",
+      });
+    },
+    onError: (error) => {
+      console.log("error", error);
+      toast.error("محصول ویرایش نشد 😒", {
+        autoClose: 2000,
+        theme: "dark",
+      });
+    },
+  });
+
+  // delete
+  const handleDelete = (id) => {
+    mutation.mutate(id);
+    setShowModal((prevShowModal) => ({ ...prevShowModal, delete: false }));
+    setShowToast(true);
+    setSelectedProductForDelete(null);
+
+    if (total === (currentPage - 1) * TRowsPerPage + 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  if (mutation.isLoading) {
+    return <span>Deleting...</span>;
+  }
+
+  const handleShowDeleteModal = (productId, productName) => {
+    setShowModal((prevShowModal) => ({ ...prevShowModal, delete: true }));
+
+    setSelectedProductForDelete([productId, productName]);
+  };
+
+  // add ...
+  const handleShowAddModal = () => {
+    setShowModal((prevShowModal) => ({ ...prevShowModal, add: true }));
+  };
+
+  const handleAdd = (formDate) => {
+    console.log("formDate Add p1", formDate);
+    addProduct.mutate(formDate);
+  };
+
+  // edit ...
+  const handleShowEditModal = (productId, productForEdit) => {
+    setShowModal((prevShowModal) => ({ ...prevShowModal, edit: true }));
+    setSelectedProductForEdit({ id: productId, data: { ...productForEdit } });
+  };
+
+  const handleEdit = (product) => {
+    editProduct.mutate(product);
+    console.log("formDate edit p1", product);
+    setShowModal((prevShowModal) => ({ ...prevShowModal, edit: false }));
+    setShowToast(true);
+  };
+
+  if (isPending) return <Spinner />;
 
   const columns = [
     {
@@ -45,7 +193,7 @@ const PanelProducts = () => {
   ];
 
   return (
-    <div className="w-4/5 mx-auto mt-12">
+    <div className="w-4/5 mx-auto">
       <div className="flex items-center justify-between mb-2 ml-4">
         <h1 className="mr-4 text-xl text-orange-500 font-bold">
           مدیریت کالاها
@@ -55,6 +203,7 @@ const PanelProducts = () => {
           bordercolorLight="border-green-500"
           textcolorDark="text-green-700"
           textcolorLight="text-green-500"
+          onClick={handleShowAddModal}
         >
           افزودن کالا
         </OutlineButton>
@@ -90,6 +239,7 @@ const PanelProducts = () => {
                   bordercolorDark="border-orange-700"
                   textcolorLight="text-orange-600"
                   textcolorDark="text-orange-700"
+                  onClick={() => handleShowEditModal(row._id, row)}
                 >
                   ویرایش
                 </OutlineButton>
@@ -99,6 +249,7 @@ const PanelProducts = () => {
                   bordercolorDark="border-red-700"
                   textcolorLight="text-red-600"
                   textcolorDark="text-red-700"
+                  onClick={() => handleShowDeleteModal(row._id, row.name)}
                 >
                   حذف
                 </OutlineButton>
@@ -113,6 +264,45 @@ const PanelProducts = () => {
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
+
+      {showModal.delete && (
+        <DeleteModal
+          productName={selectedProductForDelete[1]}
+          onDelete={() => handleDelete(selectedProductForDelete[0])}
+          onClose={() =>
+            setShowModal((prevShowModal) => ({
+              ...prevShowModal,
+              delete: false,
+            }))
+          }
+        />
+      )}
+      {showToast && <ToastContainer />}
+
+      {showModal.add && (
+        <AddEditModal
+          onAdd={(formDate) => handleAdd(formDate)}
+          onClose={() =>
+            setShowModal((prevShowModal) => ({
+              ...prevShowModal,
+              add: false,
+            }))
+          }
+        />
+      )}
+
+      {showModal.edit && (
+        <AddEditModal
+          product={selectedProductForEdit.data}
+          onEdit={(formData) => handleEdit(formData)}
+          onClose={() =>
+            setShowModal((prevShowModal) => ({
+              ...prevShowModal,
+              edit: false,
+            }))
+          }
+        />
+      )}
     </div>
   );
 };
