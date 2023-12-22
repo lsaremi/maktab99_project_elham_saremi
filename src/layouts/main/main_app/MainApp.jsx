@@ -5,7 +5,7 @@ export const MainApp = () => {
   return (
     <>
       <UserHeader />
-      <main>
+      <main className="flex items-start">
         <Outlet />
       </main>
     </>

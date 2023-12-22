@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { AdminHeader } from "../../header";
+import { WithGuard } from "../../../components";
 
-export const MainAdmin = () => {
+const MainAdmin = () => {
   return (
     <>
       <AdminHeader />
@@ -11,3 +12,5 @@ export const MainAdmin = () => {
     </>
   );
 };
+
+export const MainAdminWithGuard = WithGuard(MainAdmin);

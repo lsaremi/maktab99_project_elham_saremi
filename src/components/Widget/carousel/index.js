@@ -1,1 +1,1 @@
-export * from "./Carousel";
+export * from "./ImageSlider";

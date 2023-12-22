@@ -18,10 +18,10 @@ export const useGetAllProducts = (
         )
         .then((res) => res.data),
     keepPreviousData: true,
-    staleTime: 60000,
+    staleTime: 30000,
   });
 
-  if (isPending) return "Loading...";
+  if (isPending) return "loading...";
 
   if (error) return "An error has occurred: " + error.message;
 
