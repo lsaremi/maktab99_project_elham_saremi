@@ -1,11 +1,19 @@
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
-import { PANELORDERS_ROUTE, PANELPRODUCTS_ROUTE } from "../../../../config";
-import { ButtonContaind } from "../../../Base";
+import { loginUser } from "../../../../features";
+import {
+  HOME_ROUTE,
+  PANELORDERS_ROUTE,
+  PANELPRODUCTS_ROUTE,
+} from "../../../../config";
+import { ButtonContaind, OutlineButton } from "../../../Base";
 import coffee from "../../../../assets/images/3.png";
 
-export const LoginForm = ({ children }) => {
+export const LoginForm = ({ shouldNavigate = true }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -17,8 +25,11 @@ export const LoginForm = ({ children }) => {
       username: Yup.string().required("نام کاربری الزامی است"),
       password: Yup.string().required("رمز عبور الزامی است"),
     }),
-    onSubmit: (values) => {
-      console.log("Form submitted with values:", values);
+    onSubmit: () => {
+      dispatch(loginUser(formik.values));
+      if (shouldNavigate) {
+        navigate(`${PANELPRODUCTS_ROUTE}/${PANELORDERS_ROUTE}`);
+      }
     },
   });
 
@@ -45,11 +56,12 @@ export const LoginForm = ({ children }) => {
               type="text"
               id="username"
               name="username"
+              autoComplete="off"
               placeholder="نام کاربری را وارد نمایید"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.username}
-              className={`lg:bg-transparent mt-1 p-2 w-full border rounded-md text-gray-200 font-semibold ${
+              className={`bg-transparent mt-1 p-2 w-full border rounded-md font-semibold ${
                 formik.touched.username && formik.errors.username
                   ? "border-red-500 focus:outline-none focus:border-red-500"
                   : "focus:outline-none focus:border-blue-500"
@@ -77,7 +89,7 @@ export const LoginForm = ({ children }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.password}
-              className={`lg:bg-transparent mt-1 p-2 w-full border rounded-md lg:text-gray-200 font-semibold ${
+              className={`bg-transparent mt-1 p-2 w-full border rounded-md font-semibold ${
                 formik.touched.password && formik.errors.password
                   ? "border-red-500 focus:outline-none focus:border-red-500"
                   : "focus:outline-none focus:border-blue-500"
@@ -91,9 +103,7 @@ export const LoginForm = ({ children }) => {
           </div>
           <ButtonContaind
             type="submit"
-            onClick={() =>
-              navigate(`${PANELPRODUCTS_ROUTE}/${PANELORDERS_ROUTE}`)
-            }
+            onClick={formik.handleSubmit}
             bgColorLight="bg-green-500"
             textColor="text-white"
           >
@@ -101,7 +111,20 @@ export const LoginForm = ({ children }) => {
           </ButtonContaind>
         </form>
       </div>
-      {children}
+      <ul className="flex justify-center text-blue-400 mt-10">
+        <li>
+          <Link to={HOME_ROUTE}>
+            <OutlineButton
+              bordercolorDark="border-green-700"
+              bordercolorLight="border-green-500"
+              textcolorDark="text-green-700"
+              textcolorLight="text-green-500"
+            >
+              بازگشت به سایت
+            </OutlineButton>
+          </Link>
+        </li>
+      </ul>
     </section>
   );
 };
