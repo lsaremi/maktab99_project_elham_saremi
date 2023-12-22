@@ -13,8 +13,9 @@ export const useGetAllCategories = () => {
   if (error) return "An error has occurred: " + error.message;
 
   return data.data.categories.map((category) => ({
-    key: category._id,
+    // key: category._id,
     name: category.name,
     id: category._id,
+    icon: category.icon,
   }));
 };
