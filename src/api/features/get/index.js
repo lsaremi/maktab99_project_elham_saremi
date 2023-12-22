@@ -4,4 +4,5 @@ export * from "./GetSubcategoryById";
 export * from "./useGetOrders";
 export * from "./useGetAllProducts";
 export * from "./useGetAllCategories";
+export * from "./useGetAllSubCategories";
 export * from "./useGetQuantityOfProducts";
