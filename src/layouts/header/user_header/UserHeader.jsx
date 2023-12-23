@@ -5,7 +5,7 @@ import { HOME_ROUTE } from "../../../config";
 
 export const UserHeader = () => {
   return (
-    <header className="bg-[#4D4D4D]">
+    <header className="bg-[#4D4D4D] fixed w-full z-50">
       <div className="container mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-4 relative">
           <Link to={HOME_ROUTE}>

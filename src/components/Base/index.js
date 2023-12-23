@@ -5,3 +5,4 @@ export * from "./page_items";
 export * from "./sidebar_item";
 export * from "./select_box_section";
 export * from "./navbar";
+export * from "./loadable";

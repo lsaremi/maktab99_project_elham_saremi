@@ -21,7 +21,29 @@
 
 body,
 html {
-  height: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
   font-family: "vazir", sans-serif;
-  background-color: rgb(56, 56, 56);
+  /* background-color: rgb(56, 56, 56); */
+}
+
+.ck-editor__editable {
+  background-color: transparent !important;
+  text-align: right !important;
+  height: 4rem;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  border-color: #525252 !important;
+  border-top: none !important;
+  color: #f9d3a7 !important;
+}
+
+.ck-editor__editable::-webkit-scrollbar {
+  display: none;
+}
+.ck-toolbar_grouping {
+  background-color: #d2f8e1 !important;
+  border-color: #525252 !important;
 }

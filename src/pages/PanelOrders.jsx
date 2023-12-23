@@ -63,7 +63,7 @@ const PanelOrders = () => {
   ];
 
   return (
-    <div className="w-4/5 mx-auto mt-12">
+    <div className="w-4/5 mx-auto">
       <div className="flex gap-4 items-center justify-between mb-2 ml-4">
         <h1 className="mr-4 text-xl text-orange-500 font-bold">
           مدیریت سفارش ها
