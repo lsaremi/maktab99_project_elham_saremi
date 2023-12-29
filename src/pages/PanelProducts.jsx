@@ -150,7 +150,6 @@ const PanelProducts = () => {
   };
 
   const handleAdd = (formDate) => {
-    console.log("formDate Add p1", formDate);
     addProduct.mutate(formDate);
   };
 
@@ -267,6 +266,7 @@ const PanelProducts = () => {
 
       {showModal.delete && (
         <DeleteModal
+          label="حذف محصول"
           productName={selectedProductForDelete[1]}
           onDelete={() => handleDelete(selectedProductForDelete[0])}
           onClose={() =>
