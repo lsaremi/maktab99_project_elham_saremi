@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import payment_gateway from "./assets/images/payment-gateway.jpg";
 
 function App() {
+  const [paymentResult, setPaymentResult] = useState(null);
+
+  const handlePayment = () => {
+    setPaymentResult("success");
+  };
+
+  const handleCancel = () => {
+    setPaymentResult("fail");
+  };
+
+  const redirectToResultPage = () => {
+    if (paymentResult === "success") {
+      window.location.assign("http://localhost:3000/resultpayment/success");
+    } else if (paymentResult === "fail") {
+      window.location.assign("http://localhost:3000/resultpayment/fail");
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <img
+        src={payment_gateway}
+        alt="payment_gateway"
+        className="payment_gateway"
+      />
+      <div className="btnContainer">
+        <button className="btn fail" onClick={handleCancel}>
+          انصراف
+        </button>
+        <button className="btn success" onClick={handlePayment}>
+          پرداخت
+        </button>
+        {paymentResult && redirectToResultPage()}
+      </div>
     </div>
   );
 }
