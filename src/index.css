@@ -25,7 +25,6 @@ html {
   margin: 0;
   padding: 0;
   font-family: "vazir", sans-serif;
-  /* background-color: rgb(56, 56, 56); */
 }
 
 .ck-editor__editable {
@@ -46,4 +45,28 @@ html {
 .ck-toolbar_grouping {
   background-color: #d2f8e1 !important;
   border-color: #525252 !important;
+}
+
+.custom-input {
+  border-radius: 4px;
+  border: 1px #525252 solid;
+  padding: 7px 12px;
+  background-color: transparent;
+  width: 100% !important;
+  color: #f9d3a7;
+}
+
+/* .custom-input .error {
+  border: 1px red solid;
+} */
+.custom-input::placeholder {
+  color: #737373 !important;
+}
+.rmdp-container {
+  width: 100%;
+}
+
+.custom-input:focus {
+  outline: none;
+  border: 1px solid #3b82f6;
 }

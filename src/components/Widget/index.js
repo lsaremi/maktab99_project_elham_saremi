@@ -9,3 +9,4 @@ export * from "./select_box";
 export * from "./ck_editor";
 export * from "./with_guard";
 export * from "./rating";
+export * from "./date-picker";
