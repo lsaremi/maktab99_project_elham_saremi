@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { GetUserById, useGetOrders } from "../api";
+import { GetUserById, instance, useGetOrders } from "../api";
 import { OutlineButton, Pagination, RadioButton, Table } from "../components";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { ORDERS_URL } from "../config";
+import { CheckOrderModal, Spinner } from "../common";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const PanelOrders = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -9,6 +12,12 @@ const PanelOrders = () => {
   const [sortDirection, setSortDirection] = useState("asc");
   const TRowsPerPage = 4;
 
+  const queryClient = useQueryClient();
+
+  const [showModal, setShowModal] = useState(false);
+  const [spinner, setSpinner] = useState(false);
+
+  const [orderId, setOrderId] = useState("");
   const [orders, totalPages, total] = useGetOrders(
     currentPage,
     TRowsPerPage,
@@ -16,6 +25,37 @@ const PanelOrders = () => {
   );
 
   const handlePageChange = (page) => setCurrentPage(page);
+
+  // get order
+  const { isPending, error, data } = useQuery({
+    queryKey: ["orderData", orderId],
+    queryFn: () =>
+      instance.get(`${ORDERS_URL}/${orderId}`).then((res) => res.data),
+  });
+
+  //edit mutation ...
+  const editOrder = useMutation({
+    mutationFn: () => {
+      return instance.patch(`${ORDERS_URL}/${orderId}`, {
+        deliveryStatus: true,
+      });
+    },
+    onMutate: () => {
+      setSpinner(true);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["orderData"] });
+      setOrderId(null);
+
+      console.log("ویرایش شد");
+    },
+    onError: (error) => {
+      console.log("error", error);
+    },
+    onSettled: () => {
+      setSpinner(false);
+    },
+  });
 
   const handleDeliveredFilter = () => {
     setDelivered(true);
@@ -26,6 +66,20 @@ const PanelOrders = () => {
     setDelivered(false);
     setCurrentPage(1);
   };
+
+  const handleShowCheckOrderModal = (id) => {
+    setOrderId(id);
+    // console.log(id);
+    setShowModal(true);
+  };
+
+  const handleDeliveryStatus = () => {
+    editOrder.mutate();
+  };
+
+  if (isPending) return <Spinner />;
+
+  if (error) return `An error has occurred: ${error.message}`;
 
   const columns = [
     {
@@ -121,6 +175,7 @@ const PanelOrders = () => {
                     bordercolorDark="border-green-700"
                     textcolorLight="text-green-400"
                     textcolorDark="text-green-500"
+                    onClick={() => handleShowCheckOrderModal(row._id)}
                   >
                     بررسی سفارش
                   </OutlineButton>
@@ -128,7 +183,6 @@ const PanelOrders = () => {
               </tr>
             ))}
       </Table>
-
       <Pagination
         TRowsPerPage={TRowsPerPage}
         total={total}
@@ -136,6 +190,15 @@ const PanelOrders = () => {
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
+      {showModal && (
+        <CheckOrderModal
+          delivered={delivered}
+          data={data}
+          onEditDeliveryStatus={handleDeliveryStatus}
+          // onChangeDeliveredStatus={setDelivered(true)}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 };
