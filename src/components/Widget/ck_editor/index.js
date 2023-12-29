@@ -1,1 +1,1 @@
-export * from "./CkEditorComponent";
+export * from "./Editor";

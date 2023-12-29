@@ -4,6 +4,7 @@ export const PRODUCT_ROUTE = "products/:id";
 export const BASKET_ROUTE = "basket";
 export const CHECKOUT_ROUTE = "checkout";
 export const PAYMENT_ROUTE = "payment";
+export const RESULTPAYMENT_ROUTE = "resultpayment/:resultType";
 export const NOPAGE_ROUTE = "*";
 export const LOGIN_ROUTE = "login";
 export const PANELPRODUCTS_ROUTE = "/admin";

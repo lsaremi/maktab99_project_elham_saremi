@@ -12,7 +12,7 @@ export const useGetAllProducts = (
     queryFn: () =>
       instance
         .get(
-          `${PRODUCTS_URL}?page=${currentPage}&limit=${TRowsPerPage}${
+          `${PRODUCTS_URL}?page=${currentPage}&limit=${TRowsPerPage}&sort=-createdAt${
             selectedCategory !== "all" ? `&category=${selectedCategory}` : ""
           }`
         )

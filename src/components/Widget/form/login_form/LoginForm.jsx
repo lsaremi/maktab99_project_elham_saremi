@@ -12,7 +12,7 @@ import {
 import { ButtonContaind, OutlineButton } from "../../../Base";
 import coffee from "../../../../assets/images/3.png";
 
-export const LoginForm = ({ shouldNavigate = true }) => {
+export const LoginForm = ({ shouldNavigate }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -109,6 +109,11 @@ export const LoginForm = ({ shouldNavigate = true }) => {
           >
             ورود
           </ButtonContaind>
+          {!shouldNavigate && (
+            <p className="text-red-500 text-lg text-center mt-5">
+              نام کاربری یا پسورد نادرست است!!
+            </p>
+          )}
         </form>
       </div>
       <ul className="flex justify-center text-blue-400 mt-10">

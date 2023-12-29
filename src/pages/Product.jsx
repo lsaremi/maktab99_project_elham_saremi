@@ -1,17 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import parse from "html-react-parser";
-import { instance } from "../api";
-import { PRODUCTS_URL } from "../config";
-import { RiArrowLeftSFill } from "react-icons/ri";
+
+import { BASKET_ROUTE, HOME_ROUTE, PRODUCTS_URL } from "../config";
 import { Counter, ImageSlider, OutlineButton } from "../components";
+import { RiArrowLeftSFill } from "react-icons/ri";
+import { instance } from "../api";
+import {
+  addProductToCart,
+  clearCart,
+  removeProductFromCart,
+} from "../features/cart/cartSlice";
+import { Spinner } from "../common";
 
 const Product = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const productId = id.slice(3);
 
-  const [counterProduct, setcounterProduct] = useState(1);
+  const cartState = useSelector((state) => state.cart);
+
+  let initCount = 1;
+  const handleCount = () => {
+    cartState.map((item) => {
+      if (item.product._id === productId) {
+        initCount = item.count;
+      }
+    });
+    return initCount;
+  };
+
+  const [counterProduct, setcounterProduct] = useState(handleCount());
+
+  useEffect(() => {
+    handleCount();
+  }, [initCount]);
 
   const { isPending, error, data } = useQuery({
     queryKey: ["productById", productId],
@@ -25,19 +53,30 @@ const Product = () => {
     if (counterProduct < product.quantity) {
       setcounterProduct((prevCounter) => prevCounter + 1);
     }
+    // dispatch(incrementProduct());
   };
 
   const handleDecrement = () => {
     if (counterProduct > 1) {
       setcounterProduct((prevCounter) => prevCounter - 1);
     }
+    // dispatch(decrementProduct());
   };
 
-  if (isPending) return "loading...";
-
+  if (isPending) return <Spinner />;
   if (error) return "An error has occurred: " + error.message;
 
   const { product } = data.data;
+
+  const handleAddtoCart = () => {
+    dispatch(addProductToCart({ product, counterProduct }));
+    navigate(`${HOME_ROUTE}${BASKET_ROUTE}`);
+  };
+
+  // const handleDelete = () => {
+  //   dispatch(removeProductFromCart({ product }));
+  // };
+
   return (
     <div className="container mx-auto py-10 px-20 mt-32 mr-14 flex flex-col gap-y-14">
       <div className="flex items-center gap-x-16 mr-20">
@@ -62,15 +101,39 @@ const Product = () => {
               onDecrement={handleDecrement}
             />
             {product.quantity !== 0 && (
-              <OutlineButton
-                className="ml-4"
-                bordercolorLight="border-green-600"
-                bordercolorDark="border-green-700"
-                textcolorLight="text-green-400"
-                textcolorDark="text-green-500"
-              >
-                افزودن به سبد خرید
-              </OutlineButton>
+              <>
+                <OutlineButton
+                  className="ml-4"
+                  bordercolorLight="border-green-600"
+                  bordercolorDark="border-green-700"
+                  textcolorLight="text-green-400"
+                  textcolorDark="text-green-500"
+                  onClick={handleAddtoCart}
+                >
+                  افزودن به سبد خرید
+                </OutlineButton>
+                {/* <OutlineButton
+                  className="ml-4"
+                  bordercolorLight="border-green-600"
+                  bordercolorDark="border-green-700"
+                  textcolorLight="text-green-400"
+                  textcolorDark="text-green-500"
+                  onClick={() => dispatch(clearCart())}
+                >
+                  clear
+                </OutlineButton> */}
+
+                {/* <OutlineButton
+                  className="ml-4"
+                  bordercolorLight="border-green-600"
+                  bordercolorDark="border-green-700"
+                  textcolorLight="text-green-400"
+                  textcolorDark="text-green-500"
+                  onClick={handleDelete}
+                >
+                  delete
+                </OutlineButton> */}
+              </>
             )}
           </div>
         </div>
@@ -85,3 +148,10 @@ const Product = () => {
 };
 
 export default Product;
+
+{
+  /* <img src={fail} alt="" width={300} className="rounded-full" />
+<img src={success} alt="" width={300} className="rounded-full" />
+<img src={fail1} alt="" width={300} className="rounded-full" />
+<img src={success1} alt="" width={300} className="rounded-full" /> */
+}

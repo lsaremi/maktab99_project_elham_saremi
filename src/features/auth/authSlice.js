@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, refreshTokenThunk } from "./authThunk";
 
 const initialState = {
-  accessToken: localStorage.getItem("accessToken") || "",
-  refreshToken: localStorage.getItem("refreshToken") || "",
+  // accessToken: localStorage.getItem("accessToken") || "",
+  // refreshToken: localStorage.getItem("refreshToken") || "",
   isLogin: false,
   user: null,
   isLoading: false,
@@ -19,8 +19,8 @@ export const authSlice = createSlice({
       state.accessToken = "";
       state.refreshToken = "";
       state.isLoading = false;
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      // localStorage.removeItem("accessToken");
+      // localStorage.removeItem("refreshToken");
     },
   },
   extraReducers: (builder) => {
@@ -33,16 +33,18 @@ export const authSlice = createSlice({
       state.isLogin = true;
       state.isLoading = false;
       state.user = action.payload.data.user;
-      localStorage.setItem("accessToken", action.payload.token.accessToken);
-      localStorage.setItem("refreshToken", action.payload.token.refreshToken);
+      // localStorage.setItem("accessToken", action.payload.token.accessToken);
+      // localStorage.setItem("refreshToken", action.payload.token.refreshToken);
     });
     builder.addCase(loginUser.rejected, (state) => {
       state.isLoading = false;
+      state.isLogin = false;
+      state.user = null;
     });
     builder.addCase(refreshTokenThunk.fulfilled, (state, action) => {
       state.accessToken = action.payload.token.accessToken;
-      console.log("state.accessToken", state.accessToken);
-      localStorage.setItem("accessToken", action.payload.token.accessToken);
+      // console.log("state.accessToken", state.accessToken);
+      // localStorage.setItem("accessToken", action.payload.token.accessToken);
     });
     builder.addCase(refreshTokenThunk.rejected, (state) => {
       state.isLogin = false;
@@ -50,8 +52,8 @@ export const authSlice = createSlice({
       state.accessToken = "";
       state.refreshToken = "";
       state.isLoading = false;
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      // localStorage.removeItem("accessToken");
+      // localStorage.removeItem("refreshToken");
     });
   },
 });

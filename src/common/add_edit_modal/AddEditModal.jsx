@@ -18,8 +18,10 @@ export const AddEditModal = ({ onClose, onAdd, onEdit, product }) => {
   const { CKEditor, ClassicEditor } = editorRef.current || {};
   const [editorLoaded, setEditorLoaded] = useState(false);
 
-  const [thumbnail, setThumbnail] = useState(null);
-  const [images, setImages] = useState(null);
+  const [thumbnail, setThumbnail] = useState(
+    isEditing ? product.thumbnail : ""
+  );
+  const [images, setImages] = useState(isEditing ? product.images : "");
 
   const [data, setData] = useState(isEditing ? product.description : "");
   useEffect(() => {
@@ -314,116 +316,3 @@ export const AddEditModal = ({ onClose, onAdd, onEdit, product }) => {
     </WrapperModals>
   );
 };
-
-// const [rating, setRating] = useState({
-//   rate: 0,
-//   count: 0,
-// });
-
-// const [file, setFile] = useState({
-//   thumbnail: "",
-//   images: [],
-// });
-
-// rate: Yup.number()
-//   .min(0, "امتیاز نمی‌تواند منفی باشد")
-//   .required("وارد کردن امتیاز الزامی است"),
-// count: Yup.number()
-//   .min(0, "تعداد نمی تواند منفی باشد")
-//   .required("وارد کردن تعداد الزامی است"),
-
-// thumbnail: Yup.mixed().required("وارد کردن تصویر کوچک الزامی است"),
-// images: Yup.mixed().required("وارد کردن تصویر محصول الزامی است"),
-
-// rate: isEditing ? product.rating.rate : "",
-// count: isEditing ? product.rating.count : "",
-// thumbnail: "",
-// images: [],
-
-// const finalValues = {
-//   ...values,
-//   description: data,
-//   thumbnail: file.thumbnail,
-//   images: file.images,
-// };
-
-// for (const key in valuesWithDescription) {
-//   form_data.append(key, valuesWithDescription[key]);
-// }
-
-// for (const key in finalValues) {
-//   if (key === "images" || key === "thumbnail") {
-//     for (let i = 0; i < finalValues[key].length; i++) {
-//       form_data.append(`${key}[${i}]`, finalValues[key][i]);
-//     }
-//   } else {
-//     form_data.append(key, finalValues[key]);
-//   }
-// }
-
-{
-  /* <div className="flex items-center justify-between flex-1 w-full gap-3">
-            <MultipleFileInput
-              label="تصویر محصول"
-              name="images"
-              id="images"
-              multiple={true}
-              files={file.images}
-              onChange={(event) => {
-                // formik.setFieldValue("images", event.target.files);
-                setFile((prevFile) => ({
-                  ...prevFile,
-                  images: event.target.files,
-                }));
-              }}
-              // onBlur={formik.handleBlur}
-            />
-
-            <MultipleFileInput
-              label="تصویر کوچک محصول"
-              name="thumbnail"
-              id="thumbnail"
-              multiple={false}
-              files={file.thumbnail}
-              onChange={(event) => {
-                // formik.setFieldValue("thumbnail", event.target.files);
-                setFile((prevFile) => ({
-                  ...prevFile,
-                  thumbnail: event.target.files,
-                }));
-              }}
-              // onBlur={formik.handleBlur}
-            />
-          </div> */
-}
-
-{
-  /* <div className="flex items-center justify-between flex-1 w-full gap-3">
-            <TextInput
-              onChange={(e) =>
-                setRating((prevRate) => ({
-                  ...prevRate,
-                  rate: e.target.value,
-                }))
-              }
-              value={rating.rate}
-              label="امتیاز"
-              name="rate"
-              id="rate"
-              type="number"
-            />
-            <TextInput
-              onChange={(e) =>
-                setRating((prevRate) => ({
-                  ...prevRate,
-                  count: e.target.value,
-                }))
-              }
-              value={rating.count}
-              label="تعداد"
-              name="count"
-              id="count"
-              type="number"
-            />
-          </div> */
-}

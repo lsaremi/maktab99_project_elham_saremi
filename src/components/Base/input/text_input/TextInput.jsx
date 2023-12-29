@@ -3,6 +3,7 @@ export const TextInput = ({
   onChange,
   value,
   label,
+  placeholder,
   type,
   className,
   onBlur,
@@ -24,14 +25,14 @@ export const TextInput = ({
       </label>
 
       <input
-        className={`${className}shadow focus:border-primary placeholder:text-orange-200 bg-transparent appearance-none border border-neutral-600 rounded w-full py-2 px-3 text-orange-200 leading-tight focus:outline-none autofill:bg-yellow-200`}
+        className={`${className} shadow focus:border-primary placeholder:text-neutral-500 bg-transparent appearance-none border border-neutral-600 rounded w-full py-2 px-3 text-orange-200 leading-tight focus:outline-none autofill:bg-yellow-200`}
         id={name}
         onBlur={onBlur}
         value={value}
         onChange={onChange}
         name={name}
         type={type}
-        placeholder={label}
+        placeholder={placeholder}
         autoComplete="off"
         min="0"
       />

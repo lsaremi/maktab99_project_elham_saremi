@@ -53,7 +53,7 @@ const PanelQuantity = () => {
       });
     },
     onError: (error) => {
-      console.log("error", error);
+      // console.log("error", error);
       toast.error(" ویرایش نشد 😒", {
         autoClose: 2000,
         theme: "dark",

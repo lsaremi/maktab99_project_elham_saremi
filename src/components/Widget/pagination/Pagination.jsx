@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { NextPage, PerPage, PrevPage } from "../../Base";
 
 export const Pagination = ({
@@ -7,12 +8,20 @@ export const Pagination = ({
   currentPage,
   onPageChange,
 }) => {
-  const makeAnArray = () => {
-    let ArrayOfNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      ArrayOfNumbers.push(i);
-    }
-    return ArrayOfNumbers;
+  const itemsPerPage = 3;
+  const [displayedPages, setDisplayedPages] = useState([]);
+
+  useEffect(() => {
+    updateDisplayedPages();
+  }, [currentPage, totalPages]);
+
+  const updateDisplayedPages = () => {
+    const newStart = Math.max(currentPage - Math.floor(itemsPerPage / 2), 1);
+    const newDisplayedPages = Array.from(
+      { length: Math.min(itemsPerPage, totalPages - newStart + 1) },
+      (_, index) => newStart + index
+    );
+    setDisplayedPages(newDisplayedPages);
   };
 
   const handlePrevClick = () => {
@@ -36,7 +45,7 @@ export const Pagination = ({
         >
           <ul className="list-style-none flex">
             <PrevPage currentPage={currentPage} onPrevPage={handlePrevClick} />
-            {makeAnArray().map((page) => (
+            {displayedPages.map((page) => (
               <PerPage
                 key={page}
                 page={page}
@@ -57,3 +66,11 @@ export const Pagination = ({
     </>
   );
 };
+
+// const makeAnArray = () => {
+//   let ArrayOfNumbers = [];
+//   for (let i = 1; i <= totalPages; i++) {
+//     ArrayOfNumbers.push(i);
+//   }
+//   return ArrayOfNumbers;
+// };

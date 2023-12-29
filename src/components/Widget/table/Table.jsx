@@ -1,7 +1,7 @@
 import { TableHead } from "../../Base";
-export const Table = ({ children, columns }) => {
+export const Table = ({ children, columns, className }) => {
   return (
-    <div className="flex flex-col h-[24rem]">
+    <div className={`flex flex-col h-[24rem] ${className}`}>
       <div className="overflow-x-auto scrollbar-hide">
         <div className="inline-block min-w-full py-2">
           <div className="overflow-hidden rounded-lg">
