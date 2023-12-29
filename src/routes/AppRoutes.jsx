@@ -14,6 +14,7 @@ import {
   PANELORDERS_ROUTE,
   NOPAGE_ROUTE,
   PAYMENT_ROUTE,
+  RESULTPAYMENT_ROUTE,
 } from "../config";
 
 import { MainApp, MainAdminWithGuard } from "../layouts";
@@ -25,6 +26,7 @@ import CheckOut from "../pages/CheckOut";
 import Payment from "../pages/Payment";
 import Login from "../pages/Login";
 import NoPage from "../pages/NoPage";
+import ResultPayment from "../pages/ResultPayment";
 // import Product from "../pages/Product";
 const Product = Loadable(lazy(() => import("../pages/Product")));
 const PanelProducts = Loadable(lazy(() => import("../pages/PanelProducts")));
@@ -60,6 +62,10 @@ export const router = createBrowserRouter([
       {
         path: PAYMENT_ROUTE,
         element: <Payment />,
+      },
+      {
+        path: RESULTPAYMENT_ROUTE,
+        element: <ResultPayment />,
       },
     ],
   },
