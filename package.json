@@ -1,5 +1,5 @@
 {
-  "name": "quiz",
+  "name": "payment_gateway",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,9 +18,13 @@
     "react": "^18.2.0",
     "react-datepicker": "^4.25.0",
     "react-dom": "^18.2.0",
+<<<<<<< HEAD
     "react-icons": "^4.12.0",
     "react-multi-date-picker": "^4.4.1",
     "react-redux": "^9.0.4",
+=======
+    "react-router-dom": "^6.21.1",
+>>>>>>> origin/payment-gateway
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.3",
     "react-transition-group": "^4.4.5",
