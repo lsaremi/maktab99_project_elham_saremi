@@ -6,6 +6,7 @@ export const DeleteModal = ({
   onClose,
   selectedProduct,
   productName,
+  label,
 }) => {
   const handleDelete = (event) => {
     event.preventDefault();
@@ -22,7 +23,7 @@ export const DeleteModal = ({
         <div className="flex flex-col pr-4 pl-0 pb-4">
           <div className="sm:flex justify-between items-center">
             <h3 className="text-lg leading-6 font-bold text-green-500 text-right">
-              حذف محصول
+              {label}
             </h3>
 
             <div

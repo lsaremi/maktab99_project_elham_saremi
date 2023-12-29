@@ -7,12 +7,13 @@ export const useGetAllProducts = (
   TRowsPerPage = 2,
   selectedCategory
 ) => {
-  const { isPending, error, data } = useQuery({
+  // const { isPending, error, data } =
+  return useQuery({
     queryKey: ["panelProductsData", currentPage, selectedCategory],
     queryFn: () =>
       instance
         .get(
-          `${PRODUCTS_URL}?page=${currentPage}&limit=${TRowsPerPage}&sort=-createdAt${
+          `${PRODUCTS_URL}?page=${currentPage}&limit=${TRowsPerPage}${
             selectedCategory !== "all" ? `&category=${selectedCategory}` : ""
           }`
         )
@@ -21,12 +22,12 @@ export const useGetAllProducts = (
     staleTime: 30000,
   });
 
-  if (isPending) return "loading...";
+  // if (isPending) return "loading...";
 
-  if (error) return "An error has occurred: " + error.message;
+  // if (error) return "An error has occurred: " + error.message;
 
-  const { products } = data.data;
-  const { total, total_pages } = data;
+  // const { products } = data.data;
+  // const { total, total_pages } = data;
 
-  return [products, total, total_pages];
+  // return [products, total, total_pages];
 };
