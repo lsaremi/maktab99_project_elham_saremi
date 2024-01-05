@@ -9,11 +9,7 @@ import { BASKET_ROUTE, HOME_ROUTE, PRODUCTS_URL } from "../config";
 import { Counter, ImageSlider, OutlineButton } from "../components";
 import { RiArrowLeftSFill } from "react-icons/ri";
 import { instance } from "../api";
-import {
-  addProductToCart,
-  clearCart,
-  removeProductFromCart,
-} from "../features/cart/cartSlice";
+import { addProductToCart } from "../features/cart/cartSlice";
 import { Spinner } from "../common";
 
 const Product = () => {
@@ -21,7 +17,7 @@ const Product = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const productId = id.slice(3);
+  const productId = id;
 
   const cartState = useSelector((state) => state.cart);
 
@@ -53,14 +49,12 @@ const Product = () => {
     if (counterProduct < product.quantity) {
       setcounterProduct((prevCounter) => prevCounter + 1);
     }
-    // dispatch(incrementProduct());
   };
 
   const handleDecrement = () => {
     if (counterProduct > 1) {
       setcounterProduct((prevCounter) => prevCounter - 1);
     }
-    // dispatch(decrementProduct());
   };
 
   if (isPending) return <Spinner />;
@@ -73,15 +67,11 @@ const Product = () => {
     navigate(`${HOME_ROUTE}${BASKET_ROUTE}`);
   };
 
-  // const handleDelete = () => {
-  //   dispatch(removeProductFromCart({ product }));
-  // };
-
   return (
-    <div className="container mx-auto py-10 px-20 mt-32 mr-14 flex flex-col gap-y-14">
-      <div className="flex items-center gap-x-16 mr-20">
+    <div className="container mx-auto py-10 mt-32 mr-14 flex flex-col gap-y-14 px-4 md:px-20">
+      <div className="flex flex-col items-center gap-x-16 md:flex-row md:mr-20">
         <ImageSlider images={product?.images} />
-        <div className="flex flex-col items-start gap-5">
+        <div className="flex flex-col items-start gap-5 mt-8 md:mt-0">
           <div className="text-3xl text-orange-500 ">{product.name}</div>
           <div className="flex items-center text-orange-200">
             <div>{product.category.name}</div>
@@ -100,46 +90,24 @@ const Product = () => {
               onIncremeant={handleIncremeant}
               onDecrement={handleDecrement}
             />
-            {product.quantity !== 0 && (
-              <>
-                <OutlineButton
-                  className="ml-4"
-                  bordercolorLight="border-green-600"
-                  bordercolorDark="border-green-700"
-                  textcolorLight="text-green-400"
-                  textcolorDark="text-green-500"
-                  onClick={handleAddtoCart}
-                >
-                  افزودن به سبد خرید
-                </OutlineButton>
-                {/* <OutlineButton
-                  className="ml-4"
-                  bordercolorLight="border-green-600"
-                  bordercolorDark="border-green-700"
-                  textcolorLight="text-green-400"
-                  textcolorDark="text-green-500"
-                  onClick={() => dispatch(clearCart())}
-                >
-                  clear
-                </OutlineButton> */}
-
-                {/* <OutlineButton
-                  className="ml-4"
-                  bordercolorLight="border-green-600"
-                  bordercolorDark="border-green-700"
-                  textcolorLight="text-green-400"
-                  textcolorDark="text-green-500"
-                  onClick={handleDelete}
-                >
-                  delete
-                </OutlineButton> */}
-              </>
+            {product.quantity !== 0 ? (
+              <OutlineButton
+                className="ml-4"
+                bordercolorLight="border-green-600"
+                bordercolorDark="border-green-700"
+                textcolorLight="text-green-400"
+                textcolorDark="text-green-500"
+                onClick={handleAddtoCart}
+              >
+                افزودن به سبد خرید
+              </OutlineButton>
+            ) : (
+              <span className="text-red-500">اتمام موجودی</span>
             )}
           </div>
         </div>
       </div>
 
-      {/* <div dangerouslySetInnerHTML={{ __html: product.description }}></div> */}
       <div className="text-justify text-neutral-300">
         {parse(product.description)}
       </div>
@@ -148,10 +116,3 @@ const Product = () => {
 };
 
 export default Product;
-
-{
-  /* <img src={fail} alt="" width={300} className="rounded-full" />
-<img src={success} alt="" width={300} className="rounded-full" />
-<img src={fail1} alt="" width={300} className="rounded-full" />
-<img src={success1} alt="" width={300} className="rounded-full" /> */
-}
