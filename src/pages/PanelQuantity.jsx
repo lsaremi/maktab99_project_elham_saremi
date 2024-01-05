@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { OutlineButton, Pagination, Table } from "../components";
 import { useGetQuantityOfProducts } from "../api";
 import { PRODUCTS_URL } from "../config";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { instance } from "../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,21 +10,43 @@ import "react-toastify/dist/ReactToastify.css";
 const PanelQuantity = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editedValues, setEditedValues] = useState({});
+  const [showToast, setShowToast] = useState(false);
 
+  const queryClient = useQueryClient();
   const TRowsPerPage = 4;
   const handlePageChange = (page) => setCurrentPage(page);
 
-  const [products, totalPages, total] = useGetQuantityOfProducts(
-    currentPage,
-    TRowsPerPage
-  );
+  // const [products, totalPages, total] = useGetQuantityOfProducts(
+  //   currentPage,
+  //   TRowsPerPage
+  // );
 
-  const [showToast, setShowToast] = useState(false);
+  const removeItemFromEditedValues = (rowId) => {
+    setEditedValues((prev) => {
+      const { [rowId]: deletedItem, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ["panelQuantityData", currentPage],
+    queryFn: () =>
+      instance
+        .get(`${PRODUCTS_URL}?page=${currentPage}&limit=${TRowsPerPage}`)
+        .then((res) => res.data),
+    keepPreviousData: true,
+    staleTime: 60000,
+  });
+  const products = data?.data?.products;
 
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === "Escape") {
-        setEditedValues({});
+        const rowId = event.target.id;
+        if (editedValues[rowId]) {
+          removeItemFromEditedValues(rowId);
+        }
+
         setShowToast(false);
       }
     };
@@ -33,7 +55,7 @@ const PanelQuantity = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, []);
+  }, [editedValues, products, removeItemFromEditedValues]);
 
   //edit mutation ...
   const editProduct = useMutation({
@@ -45,15 +67,16 @@ const PanelQuantity = () => {
 
       return Promise.all(updatePromises);
     },
-    onSuccess: async () => {
-      await QueryClient.invalidateQueries({ queryKey: ["panelQuantityData"] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["panelQuantityData"] });
+      setEditedValues({});
       toast.success(" به درستی ویرایش شد 🤩", {
         autoClose: 2000,
         theme: "dark",
       });
     },
     onError: (error) => {
-      // console.log("error", error);
+      console.log("error", error);
       toast.error(" ویرایش نشد 😒", {
         autoClose: 2000,
         theme: "dark",
@@ -65,7 +88,10 @@ const PanelQuantity = () => {
     try {
       const editedRows = Object.entries(editedValues)
         .filter(([values]) => Object.keys(values).length > 0)
-        .map(([rowId, values]) => ({ id: rowId, ...values }));
+        .map(([rowId, values]) => ({
+          id: rowId.substring(1),
+          ...values,
+        }));
 
       await editProduct.mutateAsync(editedRows);
 
@@ -102,6 +128,9 @@ const PanelQuantity = () => {
     },
   ];
 
+  if (isPending) return "Loading...";
+
+  if (error) return "An error has occurred: " + error.message;
   return (
     <>
       <div className="w-4/5 mx-auto">
@@ -123,8 +152,8 @@ const PanelQuantity = () => {
           )}
         </div>
         <Table columns={columns}>
-          {Array.isArray(products) &&
-            products?.map((row, index) => (
+          {Array.isArray(data?.data.products) &&
+            data?.data.products?.map((row, index) => (
               <tr
                 key={row._id}
                 className={`bg-neutral-100 dark:border-neutral-500 text-orange-200 ${
@@ -139,20 +168,32 @@ const PanelQuantity = () => {
                 <td className="whitespace-nowrap px-6 py-4 h-[4.3rem] relative">
                   <input
                     type="number"
+                    id={`p${row._id}`}
                     name="price"
-                    className="bg-transparent relative"
-                    value={editedValues[row._id]?.price || row.price}
-                    onChange={(e) => onChangeInput(e, row._id)}
+                    className={`${
+                      editedValues[`p${row._id}`]
+                        ? "border-2 border-gray-500 py-1 pr-1"
+                        : ""
+                    } bg-transparent `}
+                    value={editedValues[`p${row._id}`]?.price || row.price}
+                    onChange={(e) => onChangeInput(e, `p${row._id}`)}
                     placeholder="قیمت رو وارد کن..."
                   />
                 </td>
                 <td className="whitespace-nowrap pr-10 pl-6 py-4 h-[4.3rem]">
                   <input
+                    id={`q${row._id}`}
                     type="number"
-                    className="bg-transparent"
+                    className={`${
+                      editedValues[`q${row._id}`]
+                        ? "border-2 border-gray-500 py-1 pr-1"
+                        : ""
+                    } bg-transparent `}
                     name="quantity"
-                    value={editedValues[row._id]?.quantity || row.quantity}
-                    onChange={(e) => onChangeInput(e, row._id)}
+                    value={
+                      editedValues[`q${row._id}`]?.quantity || row.quantity
+                    }
+                    onChange={(e) => onChangeInput(e, `q${row._id}`)}
                     placeholder="موجودی رو وارد کن..."
                   />
                 </td>
@@ -162,9 +203,9 @@ const PanelQuantity = () => {
         {showToast && <ToastContainer />}
 
         <Pagination
-          total={total}
+          total={data.total}
           TRowsPerPage={TRowsPerPage}
-          totalPages={totalPages}
+          totalPages={data.total_pages}
           currentPage={currentPage}
           onPageChange={handlePageChange}
         />
