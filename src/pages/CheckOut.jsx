@@ -1,128 +1,141 @@
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import checkoutImg from "../assets/images/checkoutImg.jpeg";
-import { OutlineButton, TextArea, TextInput } from "../components";
 
-import DatePicker, { DateObject } from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
-import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import "react-multi-date-picker/styles/colors/green.css";
-import "react-multi-date-picker/styles/backgrounds/bg-dark.css";
-import size from "react-element-popper/animations/size";
-import "react-multi-date-picker/styles/layouts/mobile.css";
-import { useState } from "react";
+import {
+  DatePickerInput,
+  OutlineButton,
+  TextArea,
+  TextInput,
+} from "../components";
+import { DateObject } from "react-multi-date-picker";
 import { useDispatch } from "react-redux";
-import { saveDate } from "../features/date/dateSlice";
+import { saveUser } from "../features";
 
 const CheckOut = () => {
+  const dispatch = useDispatch();
   const [values, setValues] = useState([
     new DateObject(),
     new DateObject().add(2, "day"),
   ]);
 
-  // const dispatch = useDispatch();
-
   const validationSchema = Yup.object({
-    name: Yup.string().trim().required("وارد کردن نام الزامی است"),
-    lastName: Yup.string().trim().required("وارد کردن نام خانوادگی الزامی است"),
+    firstname: Yup.string().trim().required("وارد کردن نام الزامی است"),
+    lastname: Yup.string().trim().required("وارد کردن نام خانوادگی الزامی است"),
+    username: Yup.string()
+      .trim()
+      .matches(/^[a-zA-Z]+$/, "تایپ انگلیسی الزامی است")
+      .required("وارد کردن نام کاربری الزامی است"),
     address: Yup.string().trim().required("وارد کردن آدرس الزامی است"),
-    phone: Yup.string()
+    phoneNumber: Yup.string()
       .trim()
       .matches(/^09[0|1|2|3][0-9]{8}$/, "شماره همراه معتبر وارد کنید")
       .required("وارد کردن تلفن همراه الزامی است"),
-    // deliveryDate: Yup.date().required("وارد کردن تاریخ تحویل الزامی است"),
   });
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      lastName: "",
+      firstname: "",
+      lastname: "",
+      username: "",
       address: "",
-      phone: "",
-      // deliveryDate: "",
+      phoneNumber: "",
     },
     validationSchema,
-    onSubmit: (values) => {
-      // onAdd(values);
-      console.log(values);
+    onSubmit: () => {
+      dispatch(saveUser(user));
       formik.resetForm();
       handlePayment();
     },
   });
 
+  const user = {
+    firstname: formik.values.firstname,
+    lastname: formik.values.lastname,
+    username: formik.values.username,
+    password: `${formik.values.username}12345678`,
+    address: formik.values.address,
+    phoneNumber: formik.values.phoneNumber,
+  };
   const handlePayment = () => {
     window.location.assign(`http://localhost:3001`);
   };
 
-  // const handleDatePickerChange = (value) => {
-  //   formik.setFieldValue("deliveryDate", value);
-  //   dispatch(saveDate(formik.values.deliveryDate?.toString()));
-  //   // dispatch(saveDate(formik.values.deliveryDate?.getTime()));
-  //   console.log(formik.values.deliveryDate);
-
-  //   if (formik.errors.deliveryDate) {
-  //     formik.setFieldError("deliveryDate", "");
-  //   }
-  // };
   return (
-    <div className="flex flex-col w-4/5 mt-28 mx-auto gap-5">
-      <h3 className="text-lg leading-6 font-bold text-right text-green-500">
+    <div className="flex flex-col mt-28 mx-auto gap-5 lg:w-4/5">
+      <h3 className="text-lg leading-6 pr-8 font-bold text-right text-green-500">
         نهایی کردن سبد خرید
       </h3>
-      <div className="flex px-20 items-center gap-32 w-full  mx-auto">
+      <div className="flex flex-col items-center gap-32 w-full mx-auto md:flex-row md:px-12 lg:px-20">
         <form
           onSubmit={formik.handleSubmit}
-          className="flex flex-col items-center justify-between flex-1"
+          className="flex flex-col items-center justify-between flex-1 w-4/5 md:w-1/3 lg:w-[10%]"
         >
           <TextInput
-            condition={formik.touched.name && formik.errors.name}
-            error={formik.errors.name}
+            condition={formik.touched.firstname && formik.errors.firstname}
+            error={formik.errors.firstname}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.name}
+            value={formik.values.firstname}
             placeholder="نام را وارد نمایید..."
             label="نام"
-            name="name"
-            id="name"
+            name="firstname"
+            id="firstname"
             type="text"
             className={`${
-              formik.touched.name && formik.errors.name
+              formik.touched.firstname && formik.errors.firstname
                 ? "border-red-500 focus:outline-none focus:border-red-500"
                 : "focus:outline-none focus:border-blue-500"
             }`}
           />
-
           <TextInput
-            condition={formik.touched.lastName && formik.errors.lastName}
-            error={formik.errors.lastName}
+            condition={formik.touched.lastname && formik.errors.lastname}
+            error={formik.errors.lastname}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.lastName}
+            value={formik.values.lastname}
             label=" نام خانوادگی "
             placeholder="نام خانوادگی را وارد نمایید..."
-            name="lastName"
-            id="lastName"
+            name="lastname"
+            id="lastname"
             type="text"
             className={`${
-              formik.touched.lastName && formik.errors.lastName
+              formik.touched.lastname && formik.errors.lastname
                 ? "border-red-500 focus:outline-none focus:border-red-500"
                 : "focus:outline-none focus:border-blue-500"
             }`}
           />
           <TextInput
-            condition={formik.touched.phone && formik.errors.phone}
-            error={formik.errors.phone}
+            condition={formik.touched.username && formik.errors.username}
+            error={formik.errors.username}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.phone}
-            placeholder="تلفن همراه را وارد نمایید..."
-            label="تلفن همراه "
-            name="phone"
-            id="phone"
+            value={formik.values.username}
+            label="نام کاربری"
+            placeholder="نام کاربری را وارد نمایید..."
+            name="username"
+            id="username"
             type="text"
             className={`${
-              formik.touched.phone && formik.errors.phone
+              formik.touched.username && formik.errors.username
+                ? "border-red-500 focus:outline-none focus:border-red-500"
+                : "focus:outline-none focus:border-blue-500"
+            }`}
+          />
+          <TextInput
+            condition={formik.touched.phoneNumber && formik.errors.phoneNumber}
+            error={formik.errors.phoneNumber}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.phoneNumber}
+            placeholder="تلفن همراه را وارد نمایید..."
+            label="تلفن همراه "
+            name="phoneNumber"
+            id="phoneNumber"
+            type="text"
+            className={`${
+              formik.touched.phoneNumber && formik.errors.phoneNumber
                 ? "border-red-500 focus:outline-none focus:border-red-500"
                 : "focus:outline-none focus:border-blue-500"
             }`}
@@ -133,31 +146,7 @@ const CheckOut = () => {
               تاریخ تحویل :
             </label>
 
-            <div style={{ direction: "rtl" }}>
-              <DatePicker
-                calendar={persian}
-                locale={persian_fa}
-                highlightToday={false}
-                onOpenPickNewDate={false}
-                required
-                calendarPosition="bottom-right"
-                // inputClass="custom-input"
-                inputClass={`custom-input ${
-                  formik.touched.deliveryDate && formik.errors.deliveryDate
-                    ? "border-red-500 focus:outline-none focus:border-red-500"
-                    : "focus:outline-none focus:border-blue-500"
-                }`}
-                placeholder="تاریخ تحویل را وارد نمایید ..."
-                className={`green text-green bg-dark`}
-                animations={[size()]}
-                plugins={[weekends()]}
-                value={values}
-                onChange={setValues}
-                range
-                minDate={new DateObject().subtract(0, "days")}
-                maxDate={new DateObject().add(6, "days")}
-              />
-            </div>
+            <DatePickerInput onChange={setValues} values={values} />
           </div>
 
           <TextArea
@@ -168,7 +157,7 @@ const CheckOut = () => {
             value={formik.values.address}
             placeholder="آدرس را وارد نمایید..."
             id="address"
-            rows={3}
+            rows={1}
             label="آدرس"
             name="address"
             className={`${
@@ -180,7 +169,7 @@ const CheckOut = () => {
         </form>
         <div className="flex flex-col items-center">
           <img
-            className="rounded-3xl w-[23rem]"
+            className="rounded-3xl w-[20rem] md:w-[18rem] lg:w-[23rem]"
             src={checkoutImg}
             alt="checkout"
           />
