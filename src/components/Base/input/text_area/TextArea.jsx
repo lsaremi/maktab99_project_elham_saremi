@@ -37,19 +37,3 @@ export const TextArea = ({
     </div>
   );
 };
-
-// <TextArea
-// condition={formik.touched.address && formik.errors.address}
-// error={formik.errors.address}
-// onChange={formik.handleChange}
-// onBlur={formik.handleBlur}
-// value={formik.values.address}
-// id="address"
-// rows={4}
-// label="آدرس:"
-// className={`${
-//   formik.touched.address && formik.errors.address
-//     ? "border-red-500 focus:outline-none focus:border-red-500"
-//     : "focus:outline-none focus:border-blue-500"
-// }`}
-// />

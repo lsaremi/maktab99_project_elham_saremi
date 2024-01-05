@@ -53,23 +53,3 @@ function Editor({
 }
 
 export default Editor;
-
-//////////////////////////////////////////////////////
-{
-  /* <Editor
-            condition={data.length === 0}
-            error="وارد کردن توضیحات الزامی است"
-            name="description"
-            id="description"
-            onChange={(data) => {
-              setData(data);
-            }}
-            editorLoaded={editorLoaded}
-          >
-            {data.length === 0 ? (
-              <div className="text-xs text-red-500">
-                وارد کردن توضیحات الزامی است
-              </div>
-            ) : null}
-          </Editor> */
-}

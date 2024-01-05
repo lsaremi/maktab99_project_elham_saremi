@@ -68,10 +68,6 @@ export const CheckOrderModal = ({
               <span> تلفن : </span>
               <p className="">{data?.data?.order.user.phoneNumber}</p>
             </div>
-            {/* <div className="flex items-center">
-              <span> زمان تحویل : </span>
-              <p className="">{}</p>
-            </div> */}
             <div className="flex items-center">
               <span>زمان سفارش : </span>
               <p className="">

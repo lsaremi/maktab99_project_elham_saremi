@@ -20,6 +20,7 @@ instance.interceptors.request.use(
   }
 );
 
+// Add a response interceptor
 let isRefreshingToken = false;
 
 instance.interceptors.response.use(
