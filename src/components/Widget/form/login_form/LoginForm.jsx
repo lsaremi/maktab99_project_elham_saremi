@@ -35,12 +35,19 @@ export const LoginForm = ({ shouldNavigate }) => {
 
   return (
     <section>
-      <div className="gap-6 flex h-full flex-nowrap items-center justify-center">
+      <div className="gap-6 flex flex-col h-full flex-nowrap items-center justify-center md:flex-row">
         <div className="mb-12 md:mb-0 lg:ml-8">
-          <img src={coffee} alt="" width={400} className="rounded-lg" />
+          <img
+            src={coffee}
+            alt=""
+            className="rounded-lg w-[200px] md:w-[300px] lg:w-[400px]"
+          />
         </div>
 
-        <form className="flex flex-col" onSubmit={formik.handleSubmit}>
+        <form
+          className="flex flex-col px-4 lg:px-0"
+          onSubmit={formik.handleSubmit}
+        >
           <h4 className="mb-12 mt-1 pb-1 text-xl font-semibold text-center text-white">
             ورود به پنل مدیریت فروشگاه کافی استور
           </h4>
@@ -109,11 +116,13 @@ export const LoginForm = ({ shouldNavigate }) => {
           >
             ورود
           </ButtonContaind>
-          {!shouldNavigate && (
-            <p className="text-red-500 text-lg text-center mt-5">
-              نام کاربری یا پسورد نادرست است!!
-            </p>
-          )}
+          {!shouldNavigate &&
+            formik.values.password.length !== 0 &&
+            formik.values.username.length !== 0 && (
+              <p className="text-red-500 text-lg text-center mt-5">
+                نام کاربری یا پسورد نادرست است!!
+              </p>
+            )}
         </form>
       </div>
       <ul className="flex justify-center text-blue-400 mt-10">

@@ -7,7 +7,7 @@ export const SideBar = () => {
   const categoriesArray = [...useGetAllCategories()];
 
   return (
-    <div className="fixed w-[20%] max-h-full p-8 mt-36 border-l-2 border-orange-500">
+    <div className="fixed w-[20%] max-h-full mt-36 border-l-2 border-orange-500 p-1 md:p-8">
       {categoriesArray.map((cat, index) => (
         <div className="my-6" key={cat.id || index}>
           <Link to={`/${PRODUCTS_ROUTE}?category=${cat.id}`}>

@@ -27,7 +27,6 @@ import Payment from "../pages/Payment";
 import Login from "../pages/Login";
 import NoPage from "../pages/NoPage";
 import ResultPayment from "../pages/ResultPayment";
-// import Product from "../pages/Product";
 const Product = Loadable(lazy(() => import("../pages/Product")));
 const PanelProducts = Loadable(lazy(() => import("../pages/PanelProducts")));
 const PanelQuantity = Loadable(lazy(() => import("../pages/PanelQuantity")));

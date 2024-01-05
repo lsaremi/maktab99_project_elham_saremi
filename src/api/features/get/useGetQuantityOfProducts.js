@@ -20,7 +20,6 @@ export const useGetQuantityOfProducts = (currentPage = 1, TRowsPerPage = 2) => {
   if (data) {
     const { products } = data.data;
     const { total, total_pages } = data;
-
     return [products, total_pages, total];
   }
 };

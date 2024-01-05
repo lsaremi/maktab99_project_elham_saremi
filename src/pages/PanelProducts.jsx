@@ -55,7 +55,7 @@ const PanelProducts = () => {
         theme: "dark",
       });
     },
-    onError: async () => {
+    onError: () => {
       toast.error("محصول حذف نشد", {
         autoClose: 2000,
         theme: "dark",
@@ -161,7 +161,6 @@ const PanelProducts = () => {
 
   const handleEdit = (product) => {
     editProduct.mutate(product);
-    console.log("formDate edit p1", product);
     setShowModal((prevShowModal) => ({ ...prevShowModal, edit: false }));
     setShowToast(true);
   };

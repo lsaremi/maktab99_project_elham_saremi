@@ -21,9 +21,7 @@ const Basket = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [showModal, setShowModal] = useState({
-    add: false,
     delete: false,
-    // spinner: false,
   });
 
   const TRowsPerPage = 4;
@@ -68,10 +66,6 @@ const Basket = () => {
   const handleNavigateToCheckout = () => {
     navigate(`${HOME_ROUTE}${CHECKOUT_ROUTE}`);
   };
-  // add ...
-  // const handleShowAddModal = () => {
-  //   // setShowModal((prevShowModal) => ({ ...prevShowModal, add: true }));
-  // };
 
   const columns = [
     {
@@ -97,11 +91,10 @@ const Basket = () => {
   ];
 
   return (
-    <div className="w-4/5 mx-auto container py-3 px-20 mt-24 mr-14 flex flex-col gap-y-2">
+    <div className="w-4/5 mx-auto container py-3 mt-24 mr-14 flex flex-col gap-y-2 md:px-20">
       <div className="flex items-center justify-between mb-2 ml-4">
         <h1 className="mr-4 text-xl text-orange-500 font-bold">سبد خرید</h1>
       </div>
-      {/* <div className="h-[20rem]"> */}
       <Table columns={columns}>
         {Array.isArray(dataPaginated) &&
           dataPaginated.map((row, index) => (
@@ -130,22 +123,12 @@ const Basket = () => {
                 >
                   حذف
                 </OutlineButton>
-                {/* <OutlineButton
-                  bordercolorLight="border-red-600"
-                  bordercolorDark="border-red-700"
-                  textcolorLight="text-red-600"
-                  textcolorDark="text-red-700"
-                  onClick={() => handleShowAddModal()}
-                >
-                  افزودن تعداد
-                </OutlineButton> */}
               </td>
             </tr>
           ))}
       </Table>
-      {/* </div> */}
-      <div className="flex items-center justify-between w-3/5 mx-auto">
-        <div className="flex items-center font-semibold  text-orange-200">
+      <div className="flex items-center justify-between w-3/5 mx-auto flex-col md:flex-row">
+        <div className="flex items-center font-semibold  text-orange-200 mb-4 md:mb-0">
           جمع : <span className="mr-1"> {calcSum()} تومان </span>
         </div>
         <OutlineButton
@@ -181,19 +164,6 @@ const Basket = () => {
             }))
           }
         />
-      )}
-
-      {showModal.add && (
-        <></>
-        // <AddEditModal
-        //   onAdd={(formDate) => handleAdd(formDate)}
-        //   onClose={() =>
-        //     setShowModal((prevShowModal) => ({
-        //       ...prevShowModal,
-        //       add: false,
-        //     }))
-        //   }
-        // />
       )}
     </div>
   );

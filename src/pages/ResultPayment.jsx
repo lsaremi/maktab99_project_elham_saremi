@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { clearCart } from "../features/cart/cartSlice";
-import { HOME_ROUTE, ORDERS_URL } from "../config";
+import { HOME_ROUTE, ORDERS_URL, USERS_URL } from "../config";
 import { instance } from "../api";
 
 import fail from "../assets/payment result/fail1.gif";
@@ -14,10 +14,9 @@ const ResultPayment = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartState = useSelector((state) => state.cart);
+  const userState = useSelector((state) => state.user);
 
-  const userId = "656cbd9078e318b55602989f";
-
-  //add mutation ...
+  //add mutation order ...
   const addOrder = useMutation({
     mutationFn: (order) => instance.post(`${ORDERS_URL}`, order),
     onError: async (error) => {
@@ -28,33 +27,54 @@ const ResultPayment = () => {
     },
   });
 
+  //add mutation user ...
+  const addUser = useMutation({
+    mutationFn: (user) => instance.post(`${USERS_URL}`, user),
+    onError: (error) => {
+      console.log("error", error);
+    },
+    onSuccess: () => {
+      console.log("با موفقیت ثبت شد");
+    },
+  });
+
+  const handleAddUser = () => {
+    addUser.mutate(userState.user);
+  };
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      handleAdd();
-      navigate(HOME_ROUTE);
-    }, 3000);
+      handleAddUser();
+    }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [addOrder]);
+  }, []);
+
+  useEffect(() => {
+    if (addUser.isSuccess) {
+      const userId = addUser?.data?.data?.data?.user?._id;
+      const orderData = {
+        user: userId,
+        products: products,
+        deliveryStatus: false,
+      };
+      if (resultType === "success") {
+        addOrder.mutate(orderData);
+        dispatch(clearCart());
+      }
+    }
+    const timeoutId = setTimeout(() => {
+      navigate(HOME_ROUTE);
+    }, 8000);
+
+    return () => clearTimeout(timeoutId);
+  }, [addUser.isSuccess]);
 
   let products = [];
   products = cartState.map((product) => ({
     count: product.count,
     product: product.product._id,
   }));
-
-  const order = {
-    user: userId,
-    products: products,
-    deliveryStatus: false,
-  };
-
-  const handleAdd = () => {
-    if (resultType === "success") {
-      addOrder.mutate(order);
-      dispatch(clearCart());
-    }
-  };
 
   return (
     <div className="mt-32 mx-auto w-8/12">
@@ -64,9 +84,13 @@ const ResultPayment = () => {
             <h4 className="text-green-500 flex-1 text-3xl whitespace-nowrap mb-10">
               🌿 پرداخت موفقیت‌آمیز بود! 🌿
             </h4>
-            {/* <p className="text-center w-full text-xl mt-5"> 🤩 🌿 </p> */}
           </div>
-          <img src={success} alt="" width={500} className="rounded-2xl" />
+          <img
+            src={success}
+            alt="success gif"
+            width={500}
+            className="rounded-2xl"
+          />
         </div>
       ) : resultType === "fail" ? (
         <div className="flex flex-col items-center justify-between w-full">
@@ -75,7 +99,7 @@ const ResultPayment = () => {
               🚫 پرداخت ناموفق بود! 🚫
             </h4>
           </div>
-          <img src={fail} alt="" width={500} className="rounded-2xl" />
+          <img src={fail} alt="fail-gif" width={500} className="rounded-2xl" />
         </div>
       ) : (
         <>

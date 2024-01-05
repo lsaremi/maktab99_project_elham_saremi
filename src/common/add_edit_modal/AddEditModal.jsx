@@ -11,17 +11,15 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 export const AddEditModal = ({ onClose, onAdd, onEdit, product }) => {
+  const [thumbnail, setThumbnail] = useState("");
+  const [images, setImages] = useState([]);
+
   const isEditing = !!product;
 
   //start ckeditor
   const editorRef = useRef();
   const { CKEditor, ClassicEditor } = editorRef.current || {};
   const [editorLoaded, setEditorLoaded] = useState(false);
-
-  const [thumbnail, setThumbnail] = useState(
-    isEditing ? product.thumbnail : ""
-  );
-  const [images, setImages] = useState(isEditing ? product.images : "");
 
   const [data, setData] = useState(isEditing ? product.description : "");
   useEffect(() => {
@@ -70,10 +68,6 @@ export const AddEditModal = ({ onClose, onAdd, onEdit, product }) => {
       form_data.append(`subcategory`, values.subcategory);
       form_data.append(`description`, values.description);
       form_data.append(`quantity`, values.quantity);
-      // form_data.append(`thumbnail`, selectedThumbnail);
-      // selectedImage.forEach((image) => {
-      //   form_data.append(`images`, image);
-      // });
 
       if (thumbnail) form_data.append("thumbnail", thumbnail);
       if (images)
@@ -92,13 +86,14 @@ export const AddEditModal = ({ onClose, onAdd, onEdit, product }) => {
     },
   });
 
-  // const handleImageChange = (event) => {
-  //   const fileList = event.target.files;
-  //   const imagesArray = Array.from(fileList).filter((file) =>
-  //     file.type.startsWith("image/")
-  //   );
-  //   setSelectedImage(imagesArray);
-  // };
+  const handleImageChange = (event) => {
+    const fileList = event.target.files;
+
+    const imagesArray = Array.from(fileList).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setImages((prev) => [...prev, ...imagesArray]);
+  };
 
   // subCategory and category select box...
   const categoryArray = [...useGetAllCategories()] || [];
@@ -106,6 +101,64 @@ export const AddEditModal = ({ onClose, onAdd, onEdit, product }) => {
   const subOfCategorySelected = subCategoryArray.filter(
     (sub) => sub.category === formik.values.category
   );
+
+  // download image...
+  const URL_BACKEND_IMAGES = "http://localhost:8000/images/products";
+
+  const downloadImages = async (imageUrls) => {
+    const filePromises = imageUrls.map(async (imageUrl) => {
+      try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        // Create a File object with a unique name
+        const fileName = imageUrl.split("/").pop(); // Extract the filename from the URL
+        const file = new File([blob], fileName, { type: blob.type });
+        return file;
+      } catch (error) {
+        console.error(`Error downloading image from URL: ${imageUrl}`, error);
+        return null; // Handle errors as needed
+      }
+    });
+
+    const files = await Promise.all(filePromises);
+    return files.filter((file) => file !== null); // Remove any null entries (failed downloads)
+  };
+
+  useEffect(() => {
+    if (isEditing) {
+      const imageUrls = product.images?.map(
+        (image) => `${URL_BACKEND_IMAGES}/images/${image}`
+      );
+      downloadImages(imageUrls)
+        .then((files) => {
+          setImages(files);
+        })
+        .catch((error) => {
+          console.error("Error downloading images:", error);
+        });
+      const ThumbnailUrl = [
+        `${URL_BACKEND_IMAGES}/thumbnails/${product.thumbnail}`,
+      ];
+      downloadImages(ThumbnailUrl)
+        .then((Thumbnail) => {
+          setThumbnail(Thumbnail[0]);
+        })
+        .catch((error) => {
+          console.error("Error downloading images:", error);
+        });
+    }
+  }, [isEditing, product]);
+
+  // remove thumbnail from modal
+  const handleDeleteThumbnail = () => {
+    setThumbnail("");
+  };
+
+  // remove image from modal
+  const handleDeleteImage = (index) => {
+    const updatedImages = images.filter((_, i) => i !== index);
+    setImages(updatedImages);
+  };
 
   return (
     <WrapperModals>
@@ -140,24 +193,84 @@ export const AddEditModal = ({ onClose, onAdd, onEdit, product }) => {
           </div>
         </div>
         <div className="flex flex-col items-center w-11/12 mx-auto">
-          <div className="flex items-center justify-between flex-1 w-full gap-3">
-            <MultipleFileInput
-              multiple={true}
-              label="تصویر کالا"
-              name="images"
-              id="images"
-              filename={images}
-              onChange={(event) => setImages(Array.from(event.target.files))}
-            />
-
-            <MultipleFileInput
-              multiple={false}
-              label="تصویر کوچک کالا"
-              name="thumbnail"
-              id="thumbnail"
-              filename={thumbnail}
-              onChange={(event) => setThumbnail(event.target.files[0])}
-            />
+          <div className="flex justify-between flex-1 w-full gap-3 mb-4">
+            <div className="flex flex-col flex-1">
+              <MultipleFileInput
+                multiple={true}
+                label="تصویر کالا"
+                name="images"
+                id="images"
+                filename={images}
+                onChange={handleImageChange}
+              />
+              <div className="flex gap-3 overflow-x-scroll w-[20rem] max-w-[20rem] scrollbar-hide">
+                {images.map((image, index) => (
+                  <div
+                    className="relative w-[65px] min-w-[65px] h-[40px]"
+                    key={index}
+                  >
+                    <svg
+                      onClick={() => handleDeleteImage(index)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-red-600 cursor-pointer absolute -top-2 -right-[6px]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt="product-image"
+                      className="object-cover rounded-full"
+                      width={60}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col flex-1">
+              <MultipleFileInput
+                multiple={false}
+                label="تصویر کوچک کالا"
+                name="thumbnail"
+                id="thumbnail"
+                filename={thumbnail}
+                onChange={(event) => setThumbnail(event.target.files[0])}
+              />
+              <div className="flex items-center justify-center">
+                {thumbnail && (
+                  <div className="relative h-[40px]">
+                    <svg
+                      onClick={handleDeleteThumbnail}
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-red-600 cursor-pointer absolute -top-2 -right-[6px]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    <img
+                      src={URL.createObjectURL(thumbnail)}
+                      alt="thumbnail"
+                      className="object-cover rounded-full py-2 h-[50px]"
+                      width={60}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
           <div className="flex items-center justify-between flex-1 w-full gap-3">
             <TextInput

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NextPage, PerPage, PrevPage } from "../../Base";
+import { FirstPage, LastPage, NextPage, PerPage, PrevPage } from "../../Base";
 
 export const Pagination = ({
   totalPages,
@@ -36,6 +36,13 @@ export const Pagination = ({
     }
   };
 
+  const handleGoToLastPage = () => {
+    onPageChange(totalPages);
+  };
+
+  const handleGoToFirstPage = () => {
+    onPageChange(1);
+  };
   return (
     <>
       {total >= TRowsPerPage && (
@@ -43,7 +50,12 @@ export const Pagination = ({
           className="flex items-center justify-center"
           aria-label="Page navigation"
         >
-          <ul className="list-style-none flex">
+          <ul className="list-style-none flex items-center justify-center">
+            <FirstPage
+              currentPage={currentPage}
+              onFirstPage={handleGoToFirstPage}
+              totalPages={totalPages}
+            />
             <PrevPage currentPage={currentPage} onPrevPage={handlePrevClick} />
             {displayedPages.map((page) => (
               <PerPage
@@ -54,11 +66,15 @@ export const Pagination = ({
                 currentPage={currentPage}
               />
             ))}
-
             <NextPage
               currentPage={currentPage}
               totalPages={totalPages}
               onNextPage={handleNextClick}
+            />
+            <LastPage
+              currentPage={currentPage}
+              onLastPage={handleGoToLastPage}
+              totalPages={totalPages}
             />
           </ul>
         </nav>
@@ -66,11 +82,3 @@ export const Pagination = ({
     </>
   );
 };
-
-// const makeAnArray = () => {
-//   let ArrayOfNumbers = [];
-//   for (let i = 1; i <= totalPages; i++) {
-//     ArrayOfNumbers.push(i);
-//   }
-//   return ArrayOfNumbers;
-// };

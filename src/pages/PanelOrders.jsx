@@ -69,7 +69,6 @@ const PanelOrders = () => {
 
   const handleShowCheckOrderModal = (id) => {
     setOrderId(id);
-    // console.log(id);
     setShowModal(true);
   };
 
@@ -118,7 +117,7 @@ const PanelOrders = () => {
 
   return (
     <div className="w-4/5 mx-auto">
-      <div className="flex gap-4 items-center justify-between mb-2 ml-4">
+      <div className="flex flex-col gap-4 items-center justify-between mb-2 ml-4 md:flex-row">
         <h1 className="mr-4 text-xl text-orange-500 font-bold">
           مدیریت سفارش ها
         </h1>
@@ -195,7 +194,6 @@ const PanelOrders = () => {
           delivered={delivered}
           data={data}
           onEditDeliveryStatus={handleDeliveryStatus}
-          // onChangeDeliveredStatus={setDelivered(true)}
           onClose={() => setShowModal(false)}
         />
       )}

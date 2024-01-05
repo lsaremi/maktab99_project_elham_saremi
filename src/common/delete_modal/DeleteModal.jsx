@@ -18,7 +18,7 @@ export const DeleteModal = ({
       <form
         dir="rtl"
         onSubmit={handleDelete}
-        className="inline-block p-6 align-bottom bg-neutral-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+        className="inline-block p-6 align-bottom bg-neutral-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-12 sm:align-middle sm:max-w-lg sm:w-full md:my-8"
       >
         <div className="flex flex-col pr-4 pl-0 pb-4">
           <div className="sm:flex justify-between items-center">

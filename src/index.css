@@ -57,9 +57,6 @@ html {
   color: #f9d3a7;
 }
 
-/* .custom-input .error {
-  border: 1px red solid;
-} */
 .custom-input::placeholder {
   color: #737373 !important;
 }

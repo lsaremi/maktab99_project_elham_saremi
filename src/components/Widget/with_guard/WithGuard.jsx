@@ -5,7 +5,6 @@ import Login from "../../../pages/Login";
 export const WithGuard = (Component) => {
   const WithGuardWrapper = (props) => {
     const isLogin = useSelector((state) => state.auth.isLogin);
-    // const isLogin = true;
     return isLogin ? (
       <Component {...props} />
     ) : (
