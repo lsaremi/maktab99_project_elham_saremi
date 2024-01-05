@@ -7,7 +7,7 @@ import { HOME_ROUTE } from "../../../config";
 export const AdminHeader = () => {
   return (
     <header className="bg-[#4D4D4D] mb-5">
-      <div className="container mx-auto w-full flex items-center justify-between">
+      <div className="container mx-auto w-full flex flex-col items-center justify-between md:flex-row">
         <div className="flex items-center gap-4 relative">
           <Link to={HOME_ROUTE}>
             <img width={80} alt="logo" src={logo} className="cursor-pointer" />
@@ -17,7 +17,7 @@ export const AdminHeader = () => {
           </h1>
         </div>
         <AdminHeaderLink />
-        <ul>
+        <ul className="my-3 md:my-0">
           <li>
             <Link to={HOME_ROUTE}>
               <OutlineButton

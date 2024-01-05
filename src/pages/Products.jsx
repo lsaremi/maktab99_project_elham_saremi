@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useSearchParams, Link } from "react-router-dom";
 import { Card, SideBar } from "../components";
-import { PRODUCTS_URL, PRODUCT_ROUTE } from "../config";
+import { PRODUCTS_ROUTE, PRODUCTS_URL, PRODUCT_ROUTE } from "../config";
 import { GetCategoryById, instance } from "../api";
 
 const Products = () => {
@@ -30,14 +30,14 @@ const Products = () => {
     <>
       <SideBar />
       <Outlet />
-      <div className="flex flex-col items-center gap-y-10 mr-80 mt-28">
+      <div className="flex flex-col items-center gap-y-10 mt-28 mr-28 md:mr-40 lg:mr-80">
         <h2 className="self-center mt-10 px-10 text-orange-500 text-3xl font-bold">
           <GetCategoryById categoryId={categoryId} />
         </h2>
-        <div className="grid grid-cols-2 gap-y-10 gap-x-10 mb-8">
+        <div className="grid grid-cols-1 gap-y-10 gap-x-10 mb-8 ml-8 md:ml-12 lg:grid-cols-2">
           {data?.data?.products?.map((product, index) => (
             <Link
-              to={`/${PRODUCT_ROUTE}${product._id}`}
+              to={`/${PRODUCTS_ROUTE}/${product._id}`}
               key={product.id || index}
             >
               <Card
@@ -55,26 +55,3 @@ const Products = () => {
 };
 
 export default Products;
-
-// const {
-//   data,
-//   error,
-//   // fetchNextPage,
-//   // hasNextPage,
-//   // isFetchingNextPage,
-//   isFetching,
-// } = useInfiniteQuery({
-//   queryKey: ["products", categoryId],
-//   // queryFn: getPage,
-//   queryFn: ({ pageParam = 1 }) => fetchPage(pageParam),
-//   config: {
-//     keepPreviousData: true,
-//     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
-//     staleTime: 30000,
-//   },
-// });
-// console.log("data", data);
-
-// if (isFetching && data?.pages.length === 0) return "loading...";
-
-// if (error) return "An error has occurred: " + error.message;
