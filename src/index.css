@@ -1,50 +1,69 @@
 @tailwind base;
+
+@layer base {
+  html {
+    @apply text-neutral-800;
+  }
+  html.dark,
+  body.dark {
+    @apply text-neutral-50;
+    @apply bg-neutral-700;
+  }
+}
+
 @tailwind components;
 @tailwind utilities;
-* {
+
+@font-face {
+  font-family: "vazir";
+  src: url("./assets//font/Vazir-Regular-FD.woff2");
+}
+
+body,
+html {
+  height: 100vh;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  font-family: "vazir", sans-serif;
 }
 
-.container {
+.ck-editor__editable {
+  background-color: transparent !important;
+  text-align: right !important;
+  height: 4rem;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  border-color: #525252 !important;
+  border-top: none !important;
+  color: #f9d3a7 !important;
 }
-.payment_gateway {
+
+.ck-editor__editable::-webkit-scrollbar {
+  display: none;
+}
+.ck-toolbar_grouping {
+  background-color: #d2f8e1 !important;
+  border-color: #525252 !important;
+}
+
+.custom-input {
+  border-radius: 4px;
+  border: 1px #525252 solid;
+  padding: 7px 12px;
+  background-color: transparent;
+  width: 100% !important;
+  color: #f9d3a7;
+}
+
+.custom-input::placeholder {
+  color: #737373 !important;
+}
+.rmdp-container {
   width: 100%;
-  height: 100vh;
-  object-fit: contain;
-  position: relative;
 }
 
-.btnContainer {
-  position: absolute;
-  width: 41%;
-  bottom: 6.9rem;
-  left: 24.7rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-}
-
-.btn {
+.custom-input:focus {
   outline: none;
-  border-radius: 9px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-}
-.success {
-  background-color: #00c192;
-  padding: 0.75rem 3rem;
-  flex: 3;
-}
-
-.fail {
-  flex: 1;
-  background-color: #ffb850;
-  padding: 0.75rem 2.4rem;
-  margin-right: 1rem;
+  border: 1px solid #3b82f6;
 }
