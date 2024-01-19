@@ -91,10 +91,10 @@ export const CheckOrderModal = ({
               `}
                   >
                     <td className="whitespace-nowrap px-6 py-4">
-                      {row.product.name}
+                      {row.product?.name}
                     </td>
                     <td className="whitespace-nowrap pr-10 pl-6 py-4">
-                      {row.product.price.toLocaleString()}
+                      {row.product?.price.toLocaleString()}
                     </td>
                     <td className="whitespace-nowrap pr-10 pl-6 py-4">
                       {row.count}
